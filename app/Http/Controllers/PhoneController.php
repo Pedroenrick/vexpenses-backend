@@ -68,7 +68,13 @@ class PhoneController extends Controller
      */
     public function show($id)
     {
-        //
+        try {
+            $phone = $this->phone->with('contact')->findOrFail($id);
+
+            return response()->json($phone);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Phone not found!'], 404);
+        }
     }
 
     /**
