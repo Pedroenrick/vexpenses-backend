@@ -2,10 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Address;
 use Illuminate\Http\Request;
 
 class AddressController extends Controller
 {
+
+    public function __construct(Address $address)
+    {
+        $this->address = $address;
+    }
     /**
      * Display a listing of the resource.
      *
@@ -13,7 +19,13 @@ class AddressController extends Controller
      */
     public function index()
     {
-        //
+        try {
+            return response()->json($this->address->all(), 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                "message" => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -25,9 +37,6 @@ class AddressController extends Controller
     public function store(Request $request)
     {
         
-        return response()->json([
-            "message" => $request->all()
-        ]);
     }
 
     /**
@@ -38,7 +47,7 @@ class AddressController extends Controller
      */
     public function show($id)
     {
-        //
+        
     }
 
     /**

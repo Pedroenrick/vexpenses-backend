@@ -21,9 +21,13 @@ class ContactController extends Controller
      */
     public function index()
     {
-        $contacts = $this->contact->all();
-
-        return $contacts;
+        try {
+            return response()->json($this->contact->all(), 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                "message" => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -34,20 +38,27 @@ class ContactController extends Controller
      */
     public function store(Request $request)
     {
+
         $request->validate($this->contact->rules(), $this->contact->feedback());
-        
+
         $img = $request->file('photo');
         $imgUrn = $img->store('images/profiles', 'public');
 
-        $contact = $this->contact->create(
-            [
-                'name' => $request->name,
-                'email' => $request->email,
-                'photo' => $imgUrn
-            ]
-        );
+        try {
+            $contact = $this->contact->create(
+                [
+                    'name' => $request->name,
+                    'email' => $request->email,
+                    'photo' => $imgUrn
+                ]
+            );
 
-        return response()->json($contact, 201);
+            return response()->json($contact, 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                "message" => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -76,30 +87,36 @@ class ContactController extends Controller
      */
     public function update(Request $request, Int $id)
     {
-        $contact = $this->contact->findOrFail($id);
+        try {
+            $contact = $this->contact->findOrFail($id);
 
-        if ($request->method() == "PATCH") {
-            $dynamicRules = $this->contact->dynamicRules($this->contact->rules(), $request->all());
+            if ($request->method() == "PATCH") {
+                $dynamicRules = $this->contact->dynamicRules($this->contact->rules(), $request->all());
 
-            $request->validate($dynamicRules, $contact->feedback());
-        } else {
-            $request->validate($contact->rules(), $contact->feedback());
+                $request->validate($dynamicRules, $contact->feedback());
+            } else {
+                $request->validate($contact->rules(), $contact->feedback());
+            }
+
+            if ($request->file('photo')) {
+                Storage::disk('public')->delete($contact->photo);
+            }
+
+            $img = $request->file('photo');
+            $imgUrn = $img->store('images/profiles', 'public');
+
+            $contact->update([
+                'name' => $request->name,
+                'email' => $request->email,
+                'photo' => $imgUrn
+            ]);
+
+            return response()->json($contact);
+        } catch (\Exception $e) {
+            return response()->json([
+                "message" => $e->getMessage()
+            ], 500);
         }
-
-        if($request->file('photo')){
-            Storage::disk('public')->delete($contact->photo);
-        }
-
-        $img = $request->file('photo');
-        $imgUrn = $img->store('images/profiles', 'public');
-
-        $contact->update([
-            'name' => $request->name,
-            'email' => $request->email,
-            'photo' => $imgUrn
-        ]);
-
-        return response()->json($contact);
     }
 
     /**
@@ -112,7 +129,7 @@ class ContactController extends Controller
     {
         try {
             $contact = $this->contact->findOrFail($id);
-            
+
             Storage::disk('public')->delete($contact->photo);
             $contact->delete();
 

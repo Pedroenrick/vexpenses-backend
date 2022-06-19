@@ -18,6 +18,7 @@ class CreateAddressesTable extends Migration
             $table->unsignedBigInteger('contact_id');
             $table->string('zipcode', 8);
             $table->string('street', 100);
+            $table->integer('number', 10);
             $table->string('complement', 100);
             $table->string('neighborhood', 100);
             $table->string('city', 100);
