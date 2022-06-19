@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DynamicRules;
 use App\Models\Phone;
 use Illuminate\Http\Request;
 
@@ -86,7 +87,23 @@ class PhoneController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        try {
+            $phone = $this->phone->findOrFail($id);
+
+            if ($request->method() == "PATCH") {
+                $request->validate(DynamicRules::validateRules($this->phone->rules(), $request->all()));
+            } else {
+                $request->validate($phone->rules());
+            }
+
+            $phone->update($request->all());
+
+            return response()->json($phone);
+        } catch (\Exception $e) {
+            return response()->json([
+                "message" => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
