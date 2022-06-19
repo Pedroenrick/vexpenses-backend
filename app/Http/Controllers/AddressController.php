@@ -19,10 +19,22 @@ class AddressController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
+    public function index(Request $request)
+    {   
         try {
-            return response()->json($this->address->with('contact')->get(), 200);
+            $addresses = $this->address->with('contact');
+
+            if ($request->has('filters')) {
+                $filters = explode('&', $request->filters);
+                foreach($filters as $condition) {
+                    $filter = explode(':', $condition);
+                    $addresses->where($filter[0], $filter[1], $filter[2]);
+                }   
+            } 
+
+            $addresses = $addresses->get();
+            
+            return response()->json($addresses, 200);
         } catch (\Exception $e) {
             return response()->json([
                 "message" => $e->getMessage()
