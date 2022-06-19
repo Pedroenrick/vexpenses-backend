@@ -101,16 +101,17 @@ class ContactController extends Controller
             if ($request->file('photo')) {
                 Storage::disk('public')->delete($contact->photo);
             }
-
-            $img = $request->file('photo');
-            $imgUrn = $img->store('images/profiles', 'public');
-
-            $contact->update([
-                'name' => $request->name,
-                'email' => $request->email,
-                'photo' => $imgUrn
-            ]);
-
+            
+            $contact->fill($request->all());
+            
+            if($request->photo){
+                $img = $request->file('photo');
+                $imgUrn = $img->store('images/profiles', 'public');
+                $contact->photo = $imgUrn;
+            }
+            
+            $contact->save();
+           
             return response()->json($contact);
         } catch (\Exception $e) {
             return response()->json([

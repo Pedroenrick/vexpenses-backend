@@ -8,8 +8,9 @@ abstract class DynamicRules
     {
         $dynamicRules = [];
 
+        unset($params['_method']);
+        
         if ($params) {
-
             foreach ($rules as $input => $rules) {
                 if (array_key_exists($input, $params)) {
                     $dynamicRules[$input] = $rules;
