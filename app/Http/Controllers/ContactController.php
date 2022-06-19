@@ -23,7 +23,7 @@ class ContactController extends Controller
     public function index(Request $request)
     {
         try {
-            $contacts = $this->contact->with('addresses');
+            $contacts = $this->contact->with('addresses')->with('phones');
 
             if ($request->has('filters')) {
                 $filters = explode('&', $request->filters);

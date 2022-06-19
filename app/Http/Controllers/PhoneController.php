@@ -27,7 +27,7 @@ class PhoneController extends Controller
                 $filters = explode('&', $request->filters);
                 foreach ($filters as $condition) {
                     $filter = explode(':', $condition);
-                    $phones->where($filter[0], $filter[1], $filter[2]);
+                    $phones = $phones->where($filter[0], $filter[1], $filter[2]);
                 }
             }
 
@@ -47,17 +47,18 @@ class PhoneController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request): \Illuminate\Http\JsonResponse
     {
         $request->validate($this->phone->rules());
 
         try {
-            $phone = $this->phone->create($request->all());
-            return response()->json($phone, 201);
-        } catch (\Exception $e) {
+            $this->phone->create($request->all());
+
             return response()->json([
-                "message" => $e->getMessage()
-            ], 500);
+                "message" => "Phone created successfully"
+            ], 201);
+        } catch (\Exception $e) {
+            throw new \Exception($e->getMessage());
         }
     }
 
@@ -67,7 +68,7 @@ class PhoneController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($id): \Illuminate\Http\JsonResponse
     {
         try {
             $phone = $this->phone->with('contact')->findOrFail($id);
@@ -85,7 +86,7 @@ class PhoneController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $id): \Illuminate\Http\JsonResponse
     {
         try {
             $phone = $this->phone->findOrFail($id);
@@ -112,7 +113,7 @@ class PhoneController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($id): \Illuminate\Http\JsonResponse
     {
         try {
             $phone = $this->phone->findOrFail($id);
