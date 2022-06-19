@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\AddressController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\PhoneController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -12,3 +15,7 @@ Route::get("/", function () {
         "message" => "Welcome to the API"
     ]);
 });
+
+Route::apiResource("address" , AddressController::class);
+Route::apiResource("contact" , ContactController::class);
+Route::apiResource("phone" , PhoneController::class);
