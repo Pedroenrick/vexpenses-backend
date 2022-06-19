@@ -22,15 +22,4 @@ class Contact extends Model
             'photo' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ];
     }
-
-    public function feedback(): array
-    {
-        return [
-            'name.required' => 'Name is required',
-            'name.min' => 'Name must be at least 3 characters',
-            'name.string' => 'Name must be a string',
-            'photo.image' => 'Photo must be an image',
-            'photo.mimes' => 'Photo must be a file of type: jpeg,png,jpg,gif,svg',
-        ];
-    }
 }

@@ -41,7 +41,7 @@ class ContactController extends Controller
     public function store(Request $request)
     {
 
-        $request->validate($this->contact->rules(), $this->contact->feedback());
+        $request->validate($this->contact->rules());
 
         $img = $request->file('photo');
         $imgUrn = $img->store('images/profiles', 'public');
@@ -93,11 +93,9 @@ class ContactController extends Controller
             $contact = $this->contact->findOrFail($id);
 
             if ($request->method() == "PATCH") {
-                $dynamicRules = DynamicRules::validateRules($this->contact->rules(), $request->all());
-
-                $request->validate($dynamicRules, $contact->feedback());
+                $request->validate(DynamicRules::validateRules($this->contact->rules(), $request->all()));
             } else {
-                $request->validate($contact->rules(), $contact->feedback());
+                $request->validate($contact->rules());
             }
 
             if ($request->file('photo')) {

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Address;
 use Illuminate\Http\Request;
 
+use App\Models\DynamicRules;
+
 class AddressController extends Controller
 {
 
@@ -74,7 +76,23 @@ class AddressController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        try {
+            $address = $this->address->findOrFail($id);
+
+            if ($request->method() == "PATCH") {
+                $request->validate(DynamicRules::validateRules($this->address->rules(), $request->all()));
+            } else {
+                $request->validate($address->rules());
+            }
+
+            $address->update($request->all());
+
+            return response()->json($address);
+        } catch (\Exception $e) {
+            return response()->json([
+                "message" => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -85,6 +103,6 @@ class AddressController extends Controller
      */
     public function destroy($id)
     {
-        //
+        
     }
 }

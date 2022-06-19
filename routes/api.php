@@ -16,6 +16,6 @@ Route::get("/", function () {
     ]);
 });
 
-Route::apiResource("address" , AddressController::class);
-Route::apiResource("contact" , ContactController::class);
-Route::apiResource("phone" , PhoneController::class);
+Route::apiResource("addressess" , AddressController::class);
+Route::apiResource("contacts" , ContactController::class);
+Route::apiResource("phones" , PhoneController::class);
