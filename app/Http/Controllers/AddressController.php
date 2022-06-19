@@ -56,6 +56,13 @@ class AddressController extends Controller
      */
     public function show($id)
     {
+        try {
+            $address = $this->address->findOrFail($id);
+
+            return response()->json($address);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Address not found!'], 404);
+        }
     }
 
     /**
