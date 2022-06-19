@@ -2,18 +2,42 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Phone;
 use Illuminate\Http\Request;
 
 class PhoneController extends Controller
 {
+
+    public function __construct(Phone $phone)
+    {
+        $this->phone = $phone;
+    }
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request): \Illuminate\Http\JsonResponse
     {
-        //
+        try {
+            $phones = $this->phone->with('contact');
+
+            if ($request->has('filters')) {
+                $filters = explode('&', $request->filters);
+                foreach($filters as $condition) {
+                    $filter = explode(':', $condition);
+                    $phones->where($filter[0], $filter[1], $filter[2]);
+                }   
+            } 
+
+            $phones = $phones->get();
+            
+            return response()->json($phones, 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                "message" => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
