@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 use App\Models\Contact;
+use Illuminate\Database\Eloquent\Model;
+use App\Models\DynamicRules;
 
 class ContactController extends Controller
 {
@@ -91,7 +93,7 @@ class ContactController extends Controller
             $contact = $this->contact->findOrFail($id);
 
             if ($request->method() == "PATCH") {
-                $dynamicRules = $this->contact->dynamicRules($this->contact->rules(), $request->all());
+                $dynamicRules = DynamicRules::validateRules($this->contact->rules(), $request->all());
 
                 $request->validate($dynamicRules, $contact->feedback());
             } else {

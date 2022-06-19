@@ -33,17 +33,4 @@ class Contact extends Model
             'photo.mimes' => 'Photo must be a file of type: jpeg,png,jpg,gif,svg',
         ];
     }
-
-    public function dynamicRules(array $rules, array $params): array
-    {
-        $dynamicRules = [];
-
-        foreach ($rules as $input => $rules) {
-            if (array_key_exists($input, $params)) {
-                $dynamicRules[$input] = $rules;
-            }
-        }
-
-        return $dynamicRules;
-    }
 }

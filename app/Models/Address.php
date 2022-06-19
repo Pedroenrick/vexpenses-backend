@@ -33,17 +33,4 @@ class Address extends Model
             'state' => 'required|string|max:2'
         ];
     }
-
-    public function dynamicRules(array $rules, array $params): array
-    {
-        $dynamicRules = [];
-
-        foreach ($rules as $input => $rules) {
-            if (array_key_exists($input, $params)) {
-                $dynamicRules[$input] = $rules;
-            }
-        }
-
-        return $dynamicRules;
-    }
 }
