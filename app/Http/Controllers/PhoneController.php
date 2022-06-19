@@ -48,7 +48,16 @@ class PhoneController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate($this->phone->rules());
+
+        try {
+            $phone = $this->phone->create($request->all());
+            return response()->json($phone, 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                "message" => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
