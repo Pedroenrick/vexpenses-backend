@@ -36,7 +36,16 @@ class AddressController extends Controller
      */
     public function store(Request $request)
     {
-        
+        $request->validate($this->address->rules());
+
+        try {
+            $address = $this->address->create($request->all());
+            return response()->json($address, 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                "message" => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -47,7 +56,6 @@ class AddressController extends Controller
      */
     public function show($id)
     {
-        
     }
 
     /**
