@@ -25,14 +25,14 @@ class PhoneController extends Controller
 
             if ($request->has('filters')) {
                 $filters = explode('&', $request->filters);
-                foreach($filters as $condition) {
+                foreach ($filters as $condition) {
                     $filter = explode(':', $condition);
                     $phones->where($filter[0], $filter[1], $filter[2]);
-                }   
-            } 
+                }
+            }
 
             $phones = $phones->get();
-            
+
             return response()->json($phones, 200);
         } catch (\Exception $e) {
             return response()->json([
@@ -114,6 +114,14 @@ class PhoneController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            $phone = $this->phone->findOrFail($id);
+
+            $phone->delete();
+
+            return response()->json(['success' => 'Phone deleted!']);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Phone not found!'], 404);
+        }
     }
 }
