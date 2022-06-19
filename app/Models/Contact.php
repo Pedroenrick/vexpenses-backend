@@ -22,4 +22,9 @@ class Contact extends Model
             'photo' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ];
     }
+
+    public function addresses()
+    {
+        return $this->hasMany(Address::class);
+    }
 }

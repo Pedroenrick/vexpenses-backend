@@ -8,12 +8,16 @@ abstract class DynamicRules
     {
         $dynamicRules = [];
 
-        foreach ($rules as $input => $rules) {
-            if (array_key_exists($input, $params)) {
-                $dynamicRules[$input] = $rules;
-            }
-        }
+        if ($params) {
 
-        return $dynamicRules;
+            foreach ($rules as $input => $rules) {
+                if (array_key_exists($input, $params)) {
+                    $dynamicRules[$input] = $rules;
+                }
+            }
+
+            return $dynamicRules;
+        }
+        throw new \Exception("Params not found");
     }
 }

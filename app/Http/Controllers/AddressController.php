@@ -22,7 +22,7 @@ class AddressController extends Controller
     public function index()
     {
         try {
-            return response()->json($this->address->all(), 200);
+            return response()->json($this->address->with('contact')->get(), 200);
         } catch (\Exception $e) {
             return response()->json([
                 "message" => $e->getMessage()
@@ -59,7 +59,7 @@ class AddressController extends Controller
     public function show($id)
     {
         try {
-            $address = $this->address->findOrFail($id);
+            $address = $this->address->with('contact')->findOrFail($id);
 
             return response()->json($address);
         } catch (\Exception $e) {

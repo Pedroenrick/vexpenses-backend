@@ -24,7 +24,7 @@ class ContactController extends Controller
     public function index()
     {
         try {
-            return response()->json($this->contact->all(), 200);
+            return response()->json($this->contact->with('addresses')->get(), 200);
         } catch (\Exception $e) {
             return response()->json([
                 "message" => $e->getMessage()
@@ -72,7 +72,7 @@ class ContactController extends Controller
     public function show(Int $id)
     {
         try {
-            $contact = $this->contact->findOrFail($id);
+            $contact = $this->contact->with('addresses')->findOrFail($id);
 
             return response()->json($contact);
         } catch (\Exception $e) {

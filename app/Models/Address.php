@@ -26,11 +26,15 @@ class Address extends Model
             'contact_id' => 'exists:contacts,id',
             'zipcode' => 'required|string|max:8',
             'street' => 'required|string|max:100',
-            'number' => 'required|integer|max:10',
+            'number' => 'required|integer',
             'complement' => 'nullable|string|max:100',
             'neighborhood' => 'required|string|max:100',
             'city' => 'required|string|max:100',
             'state' => 'required|string|max:2'
         ];
+    }
+
+    public function contact(){
+        return $this->belongsTo(Contact::class);
     }
 }
