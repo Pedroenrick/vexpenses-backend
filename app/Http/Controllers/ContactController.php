@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Storage;
 
 use App\Models\Contact;
 use App\Models\DynamicRules;
+use App\Repositories\ContactRepository;
 
 class ContactController extends Controller
 {
@@ -22,25 +23,27 @@ class ContactController extends Controller
      */
     public function index(Request $request)
     {
-        try {
-            $contacts = $this->contact->with('addresses')->with('phones');
+        $contactRepository = new ContactRepository($this->contact);
 
-            if ($request->has('filters')) {
-                $filters = explode('&', $request->filters);
-                foreach($filters as $condition) {
-                    $filter = explode(':', $condition);
-                    $contacts->where($filter[0], $filter[1], $filter[2]);
-                }   
-            } 
-
-            $contacts = $contacts->get();
-            
-            return response()->json($contacts, 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                "message" => $e->getMessage()
-            ], 500);
+        if ($request->has('params_phones')) {
+            $paramsPhones = "phones:id,{$request->params_phones}";
+            $contactRepository->getRelatedAttributes($paramsPhones);
         }
+
+        if ($request->has('params_addresses')) {
+            $paramsAddresses = "addresses:id,{$request->params_addresses}";
+            $contactRepository->getRelatedAttributes($paramsAddresses);
+        }
+
+        if ($request->has('filters')) {
+            $contactRepository->filter($request->filters);
+        }
+
+        if ($request->has('params')) {
+            $contactRepository->selectAttributes($request->params);
+        }
+
+        return response()->json($contactRepository->getResult(), 200);
     }
 
     /**

@@ -6,6 +6,7 @@ use App\Models\Address;
 use Illuminate\Http\Request;
 
 use App\Models\DynamicRules;
+use App\Repositories\AddressRepository;
 
 class AddressController extends Controller
 {
@@ -20,26 +21,23 @@ class AddressController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
-    {   
-        try {
-            $addresses = $this->address->with('contact');
+    {
+        $addressRepository = new AddressRepository($this->address);
 
-            if ($request->has('filters')) {
-                $filters = explode('&', $request->filters);
-                foreach($filters as $condition) {
-                    $filter = explode(':', $condition);
-                    $addresses->where($filter[0], $filter[1], $filter[2]);
-                }   
-            } 
-
-            $addresses = $addresses->get();
-            
-            return response()->json($addresses, 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                "message" => $e->getMessage()
-            ], 500);
+        if ($request->has('params_contact')) {
+            $paramsContact = "contact:id,{$request->params_contact}";
+            $addressRepository->getRelatedAttributes($paramsContact);
         }
+
+        if ($request->has('filters')) {
+            $addressRepository->filter($request->filters);
+        }
+
+        if ($request->has('params')) {
+            $addressRepository->selectAttributes($request->params);
+        }
+
+        return response()->json($addressRepository->getResult(), 200);
     }
 
     /**

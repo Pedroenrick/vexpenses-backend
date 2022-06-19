@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\DynamicRules;
 use App\Models\Phone;
+use App\Repositories\PhoneRepository;
 use Illuminate\Http\Request;
 
 class PhoneController extends Controller
@@ -20,25 +21,22 @@ class PhoneController extends Controller
      */
     public function index(Request $request): \Illuminate\Http\JsonResponse
     {
-        try {
-            $phones = $this->phone->with('contact');
+        $phoneRepository = new PhoneRepository($this->phone);
 
-            if ($request->has('filters')) {
-                $filters = explode('&', $request->filters);
-                foreach ($filters as $condition) {
-                    $filter = explode(':', $condition);
-                    $phones = $phones->where($filter[0], $filter[1], $filter[2]);
-                }
-            }
-
-            $phones = $phones->get();
-
-            return response()->json($phones, 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                "message" => $e->getMessage()
-            ], 500);
+        if ($request->has('params_contact')) {
+            $paramsContact = "contact:id,{$request->params_contact}";
+            $phoneRepository->getRelatedAttributes($paramsContact);
         }
+
+        if ($request->has('filters')) {
+            $phoneRepository->filter($request->filters);
+        }
+
+        if ($request->has('params')) {
+            $phoneRepository->selectAttributes($request->params);
+        }
+
+        return response()->json($phoneRepository->getResult(), 200);
     }
 
     /**
