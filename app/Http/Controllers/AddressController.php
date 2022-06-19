@@ -103,6 +103,14 @@ class AddressController extends Controller
      */
     public function destroy($id)
     {
-        
+        try {
+            $address = $this->address->findOrFail($id);
+
+            $address->delete();
+
+            return response()->json(['success' => 'Address deleted!']);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Address not found!'], 404);
+        }
     }
 }
