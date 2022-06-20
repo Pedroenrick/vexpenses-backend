@@ -23,6 +23,15 @@ class User extends Authenticatable
         'password',
     ];
 
+    public function rules(): array
+    {
+        return [
+            'name' => 'required|string|min:3',
+            'email' => 'required|string|email|unique:users',
+            'password' => 'required|string|min:6',
+        ];
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *
