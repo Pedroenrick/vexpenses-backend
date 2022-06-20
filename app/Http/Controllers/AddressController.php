@@ -11,7 +11,6 @@ use App\Repositories\AddressRepository;
 
 class AddressController extends Controller
 {
-
     public function __construct(Address $address)
     {
         $this->address = $address;
@@ -125,13 +124,14 @@ class AddressController extends Controller
         }
     }
 
-    public function getAddressByCep(Request $request){
+    public function getAddressByCep(Request $request)
+    {
         $request->validate([
             'cep' => 'required|min:8|max:8|regex:/^[0-9]+$/'
         ]);
 
         $cep = $request->cep;
-        
+
         $address = Viacep::getAddress($cep);
 
         return $address;
