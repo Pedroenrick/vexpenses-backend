@@ -18,7 +18,7 @@ Route::get("/", function () {
     ]);
 });
 
-Route::middleware('jwt')->group(function () {
+Route::middleware('jwt.auth')->group(function () {
     Route::apiResource("addresses", AddressController::class);
     Route::apiResource("contacts", ContactController::class);
     Route::apiResource("phones", PhoneController::class);

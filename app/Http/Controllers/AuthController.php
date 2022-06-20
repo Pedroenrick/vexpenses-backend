@@ -18,36 +18,39 @@ class AuthController extends Controller
     {
         $credentials = $request->only('email', 'password');
 
-        $user = JwtAuth::attempt($credentials);
+        $token = auth('api')->attempt($credentials);
 
-        if (!$user) {
+        if (!$token) {
             return response()->json([
                 'message' => 'Invalid credentials'
             ], 403);
         }
 
-        $token = JwtAuth::generateToken($user);
-
         return response()->json([
-            'message' => 'Login successful ' . $token,
+            'token' =>  $token,
         ]);
     }
 
     public function logout()
     {
-        //
+        auth('api')->logout();
+
+        return response()->json([
+            'message' => 'Logout successful'
+        ]);
     }
 
-    public function refresh()
+    public function refresh(): String
     {
-        //
+        $token = auth('api')->refresh();
+        return response()->json([
+            'token' => $token,
+        ]);
     }
 
-    public function me(Request $request)
+    public function me(): \Illuminate\Http\JsonResponse
     {
-        // $token = JwtAuth::getUserFromToken($request->header('Authorization'));
-        // dd($token);
-        // dd(JwtAuth::decodeToken());
+        return response()->json(auth()->user());
     }
 
     public function register(Request $request): \Illuminate\Http\JsonResponse
