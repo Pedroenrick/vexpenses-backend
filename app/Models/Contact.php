@@ -13,6 +13,7 @@ class Contact extends Model
         'name',
         'email',
         'photo',
+        'category_id'
     ];
 
     public function rules(): array
@@ -20,6 +21,7 @@ class Contact extends Model
         return [
             'name' => 'required|string|min:3',
             'photo' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'category_id' => 'required|integer'
         ];
     }
 
@@ -31,5 +33,10 @@ class Contact extends Model
     public function phones()
     {
         return $this->hasMany(Phone::class);
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
     }
 }

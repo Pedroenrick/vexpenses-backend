@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AddressController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PhoneController;
 use Illuminate\Http\Request;
@@ -19,3 +20,4 @@ Route::get("/", function () {
 Route::apiResource("addresses" , AddressController::class);
 Route::apiResource("contacts" , ContactController::class);
 Route::apiResource("phones" , PhoneController::class);
+Route::apiResource("categories" , CategoryController::class);

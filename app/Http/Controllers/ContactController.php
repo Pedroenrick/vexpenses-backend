@@ -35,6 +35,11 @@ class ContactController extends Controller
             $contactRepository->getRelatedAttributes($paramsAddresses);
         }
 
+        if ($request->has('params_categories')) {
+            $paramsCategories = "category:id,{$request->params_categories}";
+            $contactRepository->getRelatedAttributes($paramsCategories);
+        }
+
         if ($request->has('filters')) {
             $contactRepository->filter($request->filters);
         }
@@ -65,6 +70,7 @@ class ContactController extends Controller
                 [
                     'name' => $request->name,
                     'email' => $request->email,
+                    'category_id' => $request->category_id,
                     'photo' => $imgUrn
                 ]
             );

@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\DynamicRules;
-use App\Models\Phone;
-use App\Repositories\PhoneRepository;
+use App\Repositories\CategoryRepository;
 use Illuminate\Http\Request;
 
-class PhoneController extends Controller
+class CategoryController extends Controller
 {
-
-    public function __construct(Phone $phone)
+    public function __construct(Category $category)
     {
-        $this->phone = $phone;
+        $this->category = $category;
     }
+
     /**
      * Display a listing of the resource.
      *
@@ -21,22 +21,22 @@ class PhoneController extends Controller
      */
     public function index(Request $request): \Illuminate\Http\JsonResponse
     {
-        $phoneRepository = new PhoneRepository($this->phone);
+        $categoryRepository = new CategoryRepository($this->category);
 
-        if ($request->has('params_contact')) {
-            $paramsContact = "contact:id,{$request->params_contact}";
-            $phoneRepository->getRelatedAttributes($paramsContact);
+        if ($request->has('params_contacts')) {
+            $paramsContact = "contacts:id,{$request->params_contacts}";
+            $categoryRepository->getRelatedAttributes($paramsContact);
         }
 
         if ($request->has('filters')) {
-            $phoneRepository->filter($request->filters);
+            $categoryRepository->filter($request->filters);
         }
 
         if ($request->has('params')) {
-            $phoneRepository->selectAttributes($request->params);
+            $categoryRepository->selectAttributes($request->params);
         }
 
-        return response()->json($phoneRepository->getResult(), 200);
+        return response()->json($categoryRepository->getResult(), 200);
     }
 
     /**
@@ -47,13 +47,13 @@ class PhoneController extends Controller
      */
     public function store(Request $request): \Illuminate\Http\JsonResponse
     {
-        $request->validate($this->phone->rules());
+        $request->validate($this->category->rules());
 
         try {
-            $this->phone->create($request->all());
+            $this->category->create($request->all());
 
             return response()->json([
-                "message" => "Phone created successfully"
+                "message" => "Category created successfully"
             ], 201);
         } catch (\Exception $e) {
             throw new \Exception($e->getMessage());
@@ -63,17 +63,17 @@ class PhoneController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
     public function show(Int $id): \Illuminate\Http\JsonResponse
     {
         try {
-            $phone = $this->phone->with('contact')->findOrFail($id);
+            $category = $this->category->with('contacts')->findOrFail($id);
 
-            return response()->json($phone);
+            return response()->json($category);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Phone not found!'], 404);
+            return response()->json(['error' => 'Category not found!'], 404);
         }
     }
 
@@ -81,23 +81,23 @@ class PhoneController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Int $id): \Illuminate\Http\JsonResponse
     {
         try {
-            $phone = $this->phone->findOrFail($id);
+            $category = $this->category->findOrFail($id);
 
             if ($request->method() == "PATCH") {
-                $request->validate(DynamicRules::validateRules($this->phone->rules(), $request->all()));
+                $request->validate(DynamicRules::validateRules($this->category->rules(), $request->all()));
             } else {
-                $request->validate($phone->rules());
+                $request->validate($category->rules());
             }
 
-            $phone->update($request->all());
+            $category->update($request->all());
 
-            return response()->json($phone);
+            return response()->json($category);
         } catch (\Exception $e) {
             return response()->json([
                 "message" => $e->getMessage()
@@ -108,19 +108,19 @@ class PhoneController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
     public function destroy(Int $id): \Illuminate\Http\JsonResponse
     {
         try {
-            $phone = $this->phone->findOrFail($id);
+            $category = $this->category->findOrFail($id);
 
-            $phone->delete();
+            $category->delete();
 
-            return response()->json(['success' => 'Phone deleted!']);
+            return response()->json(['success' => 'Category deleted!']);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Phone not found!'], 404);
+            return response()->json(['error' => 'Category not found!'], 404);
         }
     }
 }
