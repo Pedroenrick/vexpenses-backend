@@ -6,6 +6,7 @@ use App\Models\Address;
 use Illuminate\Http\Request;
 
 use App\Models\DynamicRules;
+use App\Models\Viacep;
 use App\Repositories\AddressRepository;
 
 class AddressController extends Controller
@@ -122,5 +123,17 @@ class AddressController extends Controller
         } catch (\Exception $e) {
             return response()->json(['error' => 'Address not found!'], 404);
         }
+    }
+
+    public function getAddressByCep(Request $request){
+        $request->validate([
+            'cep' => 'required|min:8|max:8|regex:/^[0-9]+$/'
+        ]);
+
+        $cep = $request->cep;
+        
+        $address = Viacep::getAddress($cep);
+
+        return $address;
     }
 }

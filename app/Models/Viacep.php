@@ -33,9 +33,10 @@ final class Viacep{
         $viacep = new Viacep($cep);
 
         $guzzle = new Client();
+        $address = $guzzle->request('GET', $viacep->getUrlCompleta())->getBody()->getContents();
 
-        return $guzzle->request('GET', $viacep->getUrlCompleta());
+        $address = json_decode($address);
 
-        
+        return $address;
     }
 }

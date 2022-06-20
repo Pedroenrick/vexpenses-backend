@@ -24,6 +24,8 @@ Route::middleware('jwt.auth')->group(function () {
     Route::apiResource("phones", PhoneController::class);
     Route::apiResource("categories", CategoryController::class);
 
+    Route::post("addresses/getAddress", [AddressController::class, "getAddressByCep"]);
+
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('refresh', [AuthController::class, 'refresh']);
     Route::post('me', [AuthController::class, 'me']);
