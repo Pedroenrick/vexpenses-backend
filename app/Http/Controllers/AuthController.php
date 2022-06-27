@@ -19,8 +19,7 @@ class AuthController extends Controller
         $credentials = $request->only('email', 'password');
 
         $token = auth('api')->attempt($credentials);
-        $user = auth('api')->user();
-
+    
         if (!$token) {
             return response()->json([
                 'message' => 'Invalid credentials'
@@ -29,7 +28,6 @@ class AuthController extends Controller
 
         return response()->json([
             'token' =>  $token,
-            'user' => $user
         ]);
     }
 
